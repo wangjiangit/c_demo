@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#编译文件
+cmake-build-debug
+.idea
+
