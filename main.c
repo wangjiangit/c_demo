@@ -509,13 +509,13 @@ void formatIn() { // 格式化输入
 void fileAccessFunc() { // 文件访问
     FILE *fp;
     int c;
-    fp = fopen("./test.txt", "w");
+    fp = fopen("./a.txt", "w");
     c = putc('c', fp);
 
     if (c == EOF) {
         printf("error");
     } else {
-        printf("success");
+        printf("success");   //fseek 提供文件定位功能
     }
 }
 
@@ -699,7 +699,7 @@ void sysLevelFunc()
    // 除了默认的标准输入、标准输出和标准错误文件外，其他文件都必须在读或写之前显式地打开。系统调用open和creat用于实现功能
 
    /* char buf[20];
-   int fd=open("./test.txt",O_RDONLY,0);
+   int fd=open("./a.txt",O_RDONLY,0);
    read(fd,buf,12);
    printf("this is %s",buf);
     close(fd)
@@ -712,8 +712,27 @@ void sysLevelFunc()
    printf("actal write length is %d",nInt);
    close(fd);   // close函数：用来断开文件描述符和已打开文件之间的连接，并释放此文件描述符，以供其它文件使用
     */
-/*   uint nInt1 = unlink("./test2.txt");  //返回值：成功则返回0, 失败返回-1, 错误原因存于errno
-   printf("this is %u",nInt1);*/
+/*  uint nInt1 = unlink("./test2.txt");  //返回值：成功则返回0, 失败返回-1, 错误原因存于errno
+    printf("this is %u",nInt1);*/
+
+    // long lseek(int fd,long offset,int origin); // 可以在文件中任意移动位置而不实际读写任何数据
+    // origin 0 , 1 , 2 分别用于指定offset从文件开始、从当前位置、或从文件结束处开始算起
+
+
+    /*
+     char *bufs;
+     int fd=open("./a.txt",O_RDONLY,0777);
+     if(lseek(fd,0L,SEEK_SET)>=0){
+         int c=read(fd,bufs,6);
+         fprintf(stderr,"错误号：%d\n",errno);
+        // perror("通过perror输出错误");
+         printf("this string is %s",bufs);
+         close(fd);
+         return c;
+     }else{
+         close(fd);
+         return -1;
+     }*/
 
 
 
