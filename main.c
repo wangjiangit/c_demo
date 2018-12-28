@@ -872,10 +872,46 @@ void sysLevelFunc()
      * void setbuf(FILE *stream,char *buf)  //buf为NULL，则关闭流stream的缓存，否则setbuf 函数等价于(void) setvbuf(stream,buf,_IOFBF,BUFSIZ)
      *
      *
+     * // 格式化输出
+     *
+     * printf(const *format,...)
+     *
+     * int fprintf(FILE *stream,const *format,...) //出错返回一个负数
+     *
+     * int sprintf(char *s,const char *format) //返回实际输出的字符数，不包括'\0'
+     *
+     * //格式化输入
+     *
+     * int fscanf(FILE *sream,const char *format) //出错返回EOF ，成功返回输入项的数目
+     *
+     * int scanf(const char *format,...)
+     *
+     * int sscanf(const char* s,const char *format)
      *
      *
+     * //字符输入/输出函数
      *
+     * int fgetc(FILE *stream)
      *
+     * char *fgets(char *s,int n,FILE *stream)
+     *
+     * int fputc(int c,FILE *stream)
+     *
+     * int fputc(const char *s,FILE *stream)
+     *
+     * int getc(FILE *stream) 同 fgetc
+     *
+     * int getchar(void) 等价于 getc(stdin)
+     *
+     * char *gets(char *s)
+     *
+     * int putc(int c,FILE *stream)
+     *
+     * int putchar(int c) //等价于 putc(c,stdout)
+     *
+     * int puts(const char *s)
+     *
+     * int ungetc(int c,FILE *stream)
      *
      *
      *
