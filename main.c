@@ -824,11 +824,80 @@ void sysLevelFunc()
      * 枚举符表中的标识符声明为int类型的产量，如果其中不包含有=的枚举符，则相应常量值从0开始，且枚举产量值从左到右依次递增1
      */
 
-    /**
-     *
-     */
 
     // 注意点-----------------END--------------------------------
+
+
+    //--------------------标准库(START)-----------------------------
+
+    /**
+     * ANSI 标准定义的函数库。
+     * 标准库不是C语言本身的构成部分，但是支持标准C的实现会提供函数库的函数声明、类型及其宏定义
+     *
+     * <assert.h> 诊断
+     * <stdio.h> 输入和输出
+     * <ctype.h> 字符类别测试
+     * <string.h> 字符串处理函数
+     * <math.h> 数学函数
+     * <stdlib> 实用工具函数
+     * <stdarg.h> 可变参数表
+     * <setjump.h> 非局部跳转
+     * <signal.h> 信号处理
+     * <time.h> 日期和时间
+     * <limits.h> 和 <float.h> 与具体实现相关的限制
+     *
+     *
+     * ----输入与输出<stdio.h>----
+     * //stdin stdout 和 stderr 这三个流处于打开状态
+     *
+     * // 文件操作
+     * FILE *fopen(const char *filename,const char *mode); 如果打开失败返回null
+     *
+     * FILE *freopen(const char *filename,const char *mode,FILE *stream); // 如出错返回NULL
+     *
+     * int fflush(FILE *stream)  // 如在写的过程中发生错误，则返回EOF ,否则0
+     *
+     * int fclose(FILE *stream) // 关闭流，如出错则返回EOF ，否则返回0
+     *
+     * int remove(const char *filename) //如果删除失败，则返回非0值
+     *
+     * int rename(const char *oldname,const char *newname) //失败返回一个非0值
+     *
+     * FILE *tmpfile(void)   // 以"wb+"创建一个临时文件，该文件在关闭或程序正常结束时将被自动删除，如创建成功返回一个流，失败返回NULL
+     *
+     * char *tmpnam(char s[L_tmpnam]) // 创建一个与现有文件名不同的字符串，并返回一个指向一内部静态数组的指针。把创建的字符串保存在数组s中，并将它作为函数值返回。
+     *
+     * int setvbuf(FILE *stream,char *buf,int mode,size_t size) // 控制流stream的缓存.在执行读写及其其他操作之前必须调用该函数 mode：_IOFBF(完全缓存) _IOLBF(对文本文件进行行缓存) _IONBF(不缓存)，出错返回非0值
+     *
+     * void setbuf(FILE *stream,char *buf)  //buf为NULL，则关闭流stream的缓存，否则setbuf 函数等价于(void) setvbuf(stream,buf,_IOFBF,BUFSIZ)
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+    char s[10];
+    tmpnam(s);
+    printf("this name is %d",L_tmpnam);
+    //--------------------标准库(END)-------------------------------
 }
 
 
