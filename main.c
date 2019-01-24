@@ -8,7 +8,7 @@
 #include <time.h>
 #include <unistd.h> // unistd.h是 C 和 C++ 程序设计语言中提供对 POSIX 操作系统 API 的访问功能的头文件的名称
 #include <fcntl.h> // fcntl.h，是unix标准中通用的头文件，其中包含的相关函数有 open，fcntl，shutdown，unlink，fclose等！
-
+#include <assert.h>
 
 void point1();
 
@@ -891,13 +891,13 @@ void sysLevelFunc()
      *
      * //字符输入/输出函数
      *
-     * int fgetc(FILE *stream)
+     * int fgetc(FILE *stream)  // 返回stream流的下一个字符，返回类型为unsigned char ,否则文件末尾或错误返回EOF
      *
-     * char *fgets(char *s,int n,FILE *stream)
+     * char *fgets(char *s,int n,FILE *stream) // 最多将n-1个字符读入数组s中,并返回数组s,否则文件末尾或错误返回NULL
      *
-     * int fputc(int c,FILE *stream)
+     * int fputc(int c,FILE *stream) // 把字符c输出到stream中，它返回写入的字符，否则返回EOF
      *
-     * int fputc(const char *s,FILE *stream)
+     * int fputs(const char *s,FILE *stream) // 把字符串s输出到stream中,否则返回EOF
      *
      * int getc(FILE *stream) 同 fgetc
      *
@@ -914,14 +914,247 @@ void sysLevelFunc()
      * int ungetc(int c,FILE *stream)
      *
      *
+     * //直接输入和输出函数
+     *
+     * size_t fread(void *ptr,size_t size,size_t nobj,FILE *stream);
+     * fread 从流stream中读取最多nobj个长度为size的对象，并保存到ptr指向的数组中。它返回读取的对象数目
+     * 此返回值可能小于nobj ,必须通过feof 和ferror 函数获得执行结果
+     * size_t fwrite(const void *ptr,size_t size,size_t nobj,FILE *stream);
+     * fwrite函数从ptr指向的数组中读取nobj个对象为size的对象，并输出到流stream中，返回输出的对象数目，
+     * 如果发生错误，返回值小于nobj的值
+     *
+     *
+     * // 文件定位函数
+     *
+     * int fseek(FILE *stream,long offset,int origin)
+     *  fseek 设置流stream的文件位置，后续的读写操作将从新位置开始。
+     *  对于二进制文件，此位置被设置为从origin开始的第offset个字符处. origin 可为 SEEK_SET(文件开始处),SEEK_CUR(当前位置),SEEK_END(文件结束处)
+     *  对于文本流，offset必须设置为0或者由ftell函数返回的值(此时origin的值必须是SEEK_SET)
+     *  否则出错返回非0值
+     *
+     *  long ftell(FILE *stream) // 返回stream流的当前文件位置，出错时该函数返回-1L
+     *
+     *  void rewind(FILE *stream) // 等价于fseek(fp,0L,SEEK_SET);clearerr(fp)的执行结果
+     *
+     *  int fgetpos(FILE *stream,fpos_t *ptr);
+     *  把流stream流的当前位置记录在*ptr中，供随后的fsetpos函数调用，若出错返回一个非0值
+     *
+     *  int fsetpos(FILE *stream,const fpos_t *ptr)
+     *  把流stream的当前位置设置为fgetpos记录在*ptr中的位置。如出错则返回一个非0值
+     *
+     *  // 错误处理函数
+     * 整数表达式errno (在<errno.h>中) 错误编号,据此可以进一步了解最近一次出错的信息
+     *
+     * void clearerr(FILE *stream)
+     * 清除与流stream相关的文件结束符和错误指示符
+     *
+     * int feof(FILE *stream)
+     * 设置了与stream流相关的文件结束指示符，feof函数将符号一个非0值
+     *
+     * int ferror(FILE *stream)
+     * 设置了与stream 流相关的错误指示符，ferror函数将返回一个非0值
+     *
+     * void perror(const char *s)
+     * 打印字符串s及其与errno中整型值相应的错误信息
+     *
+     *
+     *  // 字符类别测试：<ctype.h>
+     *
+     *  isalnum(c)  isalpha(c)或isdight(c) 为true
+     *
+     *  isaplha(c)
+     *
+     *  iscntrl(c)  c为控制符
+     *
+     *  isdigit(c)  c为十进制数字
+     *
+     *  isgraph(c)  c是除空格外的可打印字符
+     *
+     *  islower(c) c是小写字母
+     *
+     *  isprint(c) c是包括空格的可打印字符
+     *
+     *  ispunct(c)  是除空格，字母和数字外的可打印字符
+     *
+     *  isspace(c) 是空格、换页符，换行符，回车符，横向制表符 和纵向制表符
+     *
+     *  isupper(c) c是大写字母
+     *
+     *  isxdight(c) c是十六进制数字
+     *
+     *  tolower(c) 将c转换为小写字母
+     *
+     *  toupper(c) 将c转换为大写字母
+     *
+     *  //字符串处理函数 <string.h>
+     *  参数s和t 的类型为char *, cs和 ct的类型为const char *  ,n为size_t ,c为int
+     *
+     *  char *strcpy(s,ct) //将字符串ct复制到字符串s中，并返回s
+     *
+     *  char *strncpy(s,ct,n) //将字符串ct中最多n个字符复制到字符串s中，并返回s,如果ct中少于n个字符，则用'\0'填充
+     *
+     *  char *strcat(s,ct) // 将字符串ct连接到s的尾部，并返回到s
+     *
+     *  char *strncat(s,ct,n) // 将字符串ct中最多n个字符链接到s的尾部，并以'\0'结束，返回s
+     *
+     *  char *strcmp(cs,ct) // 比较字符串 cs和ct;当cs<ct时，返回一个负数;当cs==ct时候，返回0，当cs>ct时，返回一个正数
+     *
+     *  char *strncmp(cs,ct,n) //比较字符串cs中至多前n个字符与字符串ct相比较。当cs<ct时，返回一个负数;当cs==ct时，返回0，当cs>ct时，返回一个正数
+     *
+     *  char *strchr(cs,c) // 返回指向字符c在字符串cs中第一次出现的位置的指针；如果cs中不包含c,则函数返回NULL
+     *
+     *  char *strrchr(cs,c) // 返回字符c在字符串cs中最后一次出现的位置的指针，如果cs中不包含c,则该函数返回NULL
+     *
+     *  size_t strspn(cs,ct) //返回字符串cs中的字符的前缀的长度
+     *
+     *  size_t strcspn(cs,ct) //返回字符串cs中不包含ct中的字符的前缀的长度
+     *
+     *  char *strpbrk(cs,ct) // 返回一个指针，它指向字符串ct中的任意字符第一次出现在字符串cs中的位置；如果cs中没有与ct相同的字符，则返回NULL
+     *
+     *  char *strstr(cs,ct) // 返回一个指针，它指向字符串ct中的任意字符第一次出现在字符串cs中的位置；如果cs中没有与ct相同的字符，则返回NULL
+     *
+     *  size_t *strlen(cs)  //返回字符串cs的长度
+     *
+     *  char *strerror(n) // 返回一个指针，它指向与错误编号n对应的错误信息字符串
+     *
+     *  char *strtok(s,ct) // 在s中搜索由ct中的的字符界定的记号
+     *
+     *
+     *   //以mem开头的函数按照字符数组的方式操作对象,其主要目的是提供一个高效的函数接口
+     *  void *memcpy(s,ct,n)
+     *
+     *  void *memmove(s,ct,n)
+     *
+     *  int memcmp(cs,ct,n)
+     *
+     *  void *memchr(cs,c,n)
+     *
+     *  void *memset(s,c,n)
+     *
+     *
+     *  //数学函数 <math.h>
+     *  宏EDOM和ERANGE (在<error.h>中有声明)是2个非0整型常量，分别用于指示函数的定义域错误和值域错误
+     *
+     * 以下请参考手册
+     *  sin(x)
+     *
+     *  cos(x)
+     *
+     *  tan(x)
+     *
+     *  asin(x)
+     *
+     *  acos(x)
+     *
+     *  atan(x)
+     *
+     *  atan2(y,x)
+     *
+     *  sinh(x)
+     *
+     *  cosh(x)
+     *
+     *  tanh(x)
+     *
+     *  exp(x)
+     *
+     *  log(x)
+     *
+     *  log10(x)
+     *
+     *  pow(x,y)
+     *
+     *  sqrt(x)
+     *
+     *  ceil(x)
+     *
+     *  floor(x)
+     *
+     *  fabs(x)
+     *
+     *  ldexp(x)
+     *
+     *  ldexp(x,n)
+     *
+     *  frexp(x,int *ip)
+     *
+     *  modf(x,double *p)
+     *
+     *  fmod(x,y)
+     *
+     * // <stdlib.h>
+     *  具体用法参考手册
+     * double atof(const char *s) // strtod(s,(char**)NULL)
+     *
+     * int atoi(const char *s) // (int)strtol(s,(char**)NULL,10)
+     *
+     * long atol(const char *s) // (int)strtol(s,(char**)NULL,10)
+     *
+     * double strtod(const char *s,char **endp)
+     *
+     * long strtol(const char *s,char **endp,int base)
+     *
+     * unsigned long strtoul(const char *s,char **endp,int base)
+     *
+     * int rand(void)
+     *
+     * void srand(unsigned int seed)
+     *
+     * void *calloc(size_t nobj,size_t size)
+     *
+     * void *malloc(size_t size)
+     *
+     * void *realloc(void *p,size_t size)
+     *
+     * void free(void *p)
+     *
+     * void abort() //使程序非正常终止
+     *
+     * void exit(int status) // 使程序正常终止   EXIT_SUCCESS  和 EXIT_FAILURE
+     *
+     * int atexit(void (*fcn)(void)) //atexit函数登记函数fcn,该函数在程序正常终止时被调用。如果登记失败，则返回非0值
+     *
+     * int system(const char *s) // 将字符串s传递给执行环境
+     *
+     * char *getenv(const char *name)
+     *
+     * void *bsearch(const void *key,const void *base,size_t n,size_t size,int (*cmp)(const void *keyval,const void *datum))
+     *
+     * void qsort(void *base,size_t n,size_t size,int(*cmp)(const void *,const void *))
+     *
+     * int abs(int n)
+     *
+     * long labs(long n)
+     *
+     * div_t div(int num,int denom)
+     *
+     * ldiv_t ldiv(long num,long denom)
+     *
+     *
+     * //诊断 <assert.h>
+     *
+     * void assert(int expression) //如果表达式的值为0，则assert宏在stderr中打印一条信息。比如：
+     * Assertion failed:表达式  ，file源文件名，line行号
+     *
+     * //可变参数表  <stdarg.h>
+     *  va_list ap
+     *
+     *  va_start(va_list ap,lastarg)
+     *
+     *  type va_arg(va_list ap,type)
+     *
+     *  void va_end(va_list ap)
+     *
+     * //非局部跳转 <setjmp.h>
+     *
+     *
+     * // <signal.h>
+     *
+     * void (*signal(int sig,void(*handler)(int)))(int)
      *
      *
      *
-     *
-     *
-     *
-     *
-     *
+     * // <time.h>
      *
      *
      *
@@ -930,9 +1163,13 @@ void sysLevelFunc()
      *
      *
      */
-    char s[10];
-    tmpnam(s);
-    printf("this name is %d",L_tmpnam);
+
+    const char *message="error message is";
+    perror(message);
+
+    printf("this name is %d",strtod("1",NULL));
+        int a=3;
+        assert(a==3?3:1);
     //--------------------标准库(END)-------------------------------
 }
 
